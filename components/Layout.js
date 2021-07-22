@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Head from "next/head";
 import NextLink from "next/link";
 import Cookies from "js-cookie";
@@ -23,6 +23,7 @@ import { useRouter } from "next/router";
 
 export default function Layout({ title, description, children }) {
   const router = useRouter();
+  const [darkModeState, setDarkModeState] = useState(false);
   const { state, dispatch } = useContext(Store);
   const { darkMode, cart, userInfo } = state;
   const [anchorEl, setAnchorEl] = useState(null);
@@ -53,11 +54,14 @@ export default function Layout({ title, description, children }) {
 
   const classes = UseStyles();
 
+  useEffect(() => {
+    setDarkModeState(darkMode);
+  }, []);
+
   const darkModeChangeHandler = () => {
-    dispatch({
-      type: darkMode ? "DARK_MODE_OFF" : "DARK_MODE_ON",
-    });
+    dispatch({ type: darkMode ? "DARK_MODE_OFF" : "DARK_MODE_ON" });
     const newDarkMode = !darkMode;
+    setDarkModeState(newDarkMode);
     Cookies.set("darkMode", newDarkMode ? "ON" : "OFF");
   };
 
@@ -98,7 +102,7 @@ export default function Layout({ title, description, children }) {
             <div className={classes.grow}></div>
             <div>
               <Switch
-                checked={darkMode}
+                checked={darkModeState}
                 onChange={darkModeChangeHandler}
               ></Switch>
               <NextLink href="/cart" passHref>
