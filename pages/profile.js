@@ -40,8 +40,6 @@ function Profile() {
     }
     setValue("name", userInfo.name);
     setValue("email", userInfo.email);
-    setValue("name", userInfo.name);
-    setValue("name", userInfo.name);
   }, []);
 
   const submitHandler = async ({ name, email, password, confirmPassword }) => {
