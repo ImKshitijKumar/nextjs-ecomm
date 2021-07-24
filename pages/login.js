@@ -16,6 +16,7 @@ import Cookies from "js-cookie";
 import Layout from "../components/Layout";
 import { Store } from "../utils/Store";
 import UseStyles from "../utils/styles";
+import { getError } from "../utils/error";
 
 export default function Login() {
   const {
@@ -57,10 +58,7 @@ export default function Login() {
       Cookies.set("userInfo", JSON.stringify(data));
       router.push(redirect || "/");
     } catch (error) {
-      enqueueSnackbar(
-        error.response.data ? error.response.data.message : error.message,
-        { variant: "error" }
-      );
+      enqueueSnackbar(getError(error), { variant: "error" });
     }
   };
 
