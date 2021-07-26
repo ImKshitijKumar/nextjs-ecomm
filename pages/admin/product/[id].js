@@ -1,8 +1,10 @@
-import React, { useContext, useEffect, useReducer } from "react";
+import React, { useContext, useEffect, useReducer, useState } from "react";
 import {
   Button,
   Card,
+  Checkbox,
   CircularProgress,
+  FormControlLabel,
   Grid,
   List,
   ListItem,
@@ -63,6 +65,7 @@ function ProductEdit({ params }) {
   const productId = params.id;
   const router = useRouter();
   const { state } = useContext(Store);
+  const [isFeatured, setIsFeatured] = useState(false);
   const [{ loading, error, loadingUpdate, loadingUpload }, dispatch] =
     useReducer(reducer, {
       loading: true,
@@ -94,6 +97,8 @@ function ProductEdit({ params }) {
           setValue("slug", data.slug);
           setValue("price", data.price);
           setValue("image", data.image);
+          setValue("featuredImage", data.featuredImage);
+          setIsFeatured(data.isFeatured);
           setValue("category", data.category);
           setValue("brand", data.brand);
           setValue("countInStock", data.countInStock);
@@ -106,7 +111,7 @@ function ProductEdit({ params }) {
     }
   }, []);
 
-  const uploadHandler = async (e) => {
+  const uploadHandler = async (e, imageField = "image") => {
     const file = e.target.files[0];
     const bodyFormData = new FormData();
     bodyFormData.append("file", file);
@@ -119,7 +124,7 @@ function ProductEdit({ params }) {
         },
       });
       dispatch({ type: "UPLOAD_SUCCESS" });
-      setValue("image", data.secure_url);
+      setValue(imageField, data.secure_url);
       enqueueSnackbar("File Uploaded Successfully", { variant: "success" });
     } catch (error) {
       dispatch({ type: "UPLOAD_FAIL", payload: getError(error) });
@@ -132,6 +137,7 @@ function ProductEdit({ params }) {
     slug,
     price,
     image,
+    featuredImage,
     category,
     brand,
     countInStock,
@@ -148,6 +154,8 @@ function ProductEdit({ params }) {
           slug,
           price,
           image,
+          isFeatured,
+          featuredImage,
           category,
           brand,
           countInStock,
@@ -309,6 +317,56 @@ function ProductEdit({ params }) {
                       <Button variant="contained" component="label">
                         Upload File
                         <input type="file" onChange={uploadHandler} hidden />
+                      </Button>
+                      {loadingUpload && <CircularProgress />}
+                    </ListItem>
+
+                    <ListItem>
+                      <FormControlLabel
+                        label="Is Featured"
+                        control={
+                          <Checkbox
+                            onClick={(e) => setIsFeatured(e.target.value)}
+                            checked={isFeatured}
+                            name="isFeatured"
+                          />
+                        }
+                      ></FormControlLabel>
+                    </ListItem>
+
+                    <ListItem>
+                      <Controller
+                        name="featuredImage"
+                        control={control}
+                        defaultValue=""
+                        rules={{
+                          required: true,
+                        }}
+                        render={({ field }) => (
+                          <TextField
+                            variant="outlined"
+                            fullWidth
+                            id="featuredImage"
+                            label="Featured Image"
+                            error={Boolean(errors.featuredImage)}
+                            helperText={
+                              errors.featuredImage
+                                ? "Featured Image is required"
+                                : ""
+                            }
+                            {...field}
+                          ></TextField>
+                        )}
+                      ></Controller>
+                    </ListItem>
+                    <ListItem>
+                      <Button variant="contained" component="label">
+                        Upload File
+                        <input
+                          type="file"
+                          onChange={(e) => uploadHandler(e, "featuredImage")}
+                          hidden
+                        />
                       </Button>
                       {loadingUpload && <CircularProgress />}
                     </ListItem>
