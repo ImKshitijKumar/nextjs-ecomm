@@ -56,6 +56,7 @@ export default function Home(props) {
           </NextLink>
         ))}
       </Carousel>
+
       <Typography variant="h2">Popular Products</Typography>
       <Grid container spacing={3}>
         {topRatedProducts.map((product) => (
@@ -84,7 +85,7 @@ export async function getServerSideProps() {
     "-reviews"
   )
     .lean()
-    .limit(4);
+    .limit(3);
   await db.disconnect();
   return {
     props: {

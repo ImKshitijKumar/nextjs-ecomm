@@ -326,7 +326,7 @@ function ProductEdit({ params }) {
                         label="Is Featured"
                         control={
                           <Checkbox
-                            onClick={(e) => setIsFeatured(e.target.value)}
+                            onClick={(e) => setIsFeatured(e.target.checked)}
                             checked={isFeatured}
                             name="isFeatured"
                           />
